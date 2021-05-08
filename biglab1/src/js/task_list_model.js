@@ -1,7 +1,4 @@
-
-"use strict";
 import dayjs from 'dayjs';
-
 
 function TaskModel(id, description, deadline, important = false, Private = false) {
     this.id = id;
@@ -61,18 +58,7 @@ function TaskModel(id, description, deadline, important = false, Private = false
 const TaskListModel = function () {
 
     let task_list = [];
-
-    const PrintTask = function (task_list) {
-        for (let task of task_list) {
-
-            let deadline_out = "undefined";
-            if (task.deadline)
-                deadline_out = task.deadline.format();
-
-            console.log("Id: " + task.id + ", Description: " + task.description + ", Urgent: " + task.isUrgent +
-                ", Private: " + task.isPrivate + ", Deadline: " + deadline_out);
-        }
-    };
+    let lastID = 0;
 
     return {
 
@@ -81,19 +67,46 @@ const TaskListModel = function () {
         },
 
         AddTask: function (new_task) {
-            new_task.id = task_list.length + 1;
+            new_task.id = lastID;
+            lastID += 1;
             task_list.push(new_task);
         },
 
         CreateAndAddTask(id, description, deadline, important = false, Private = false){
             let new_task = new TaskModel(id, description, deadline, important, Private);
-            new_task.id = task_list.length + 1;
+            new_task.id = lastID;
+            lastID += 1;
             task_list.push(new_task);
         },
 
-        FilterAndReturn: function (filter_function) {
-            let filter_list = task_list.filter(filter_function);
-            return filter_list;
+        DeleteTask: function(id){
+            let index = 0;
+            for (let element of task_list){
+                if (element.id === id)
+                    break;
+                index += 1;
+            }
+            
+            if (index < task_list.length) {
+                task_list.splice(index, 1);
+            }
+        },
+
+        ModifyTask: function(id, description, deadline, important, Private){
+            let index = 0;
+            for (let element of task_list){
+                if (element.id === id)
+                    break;
+                index += 1;
+            }
+
+            if (index < task_list.length){
+                task_list[index].description = description;
+                task_list[index].deadline = deadline;
+                task_list[index].important = important;
+                task_list[index].Private = Private;
+            }
+
         },
 
         filterAll: function(){
@@ -120,15 +133,18 @@ const TaskListModel = function () {
 
 const createTaskList = function () {
 
-    let task1 = new TaskModel(1, "Call home", dayjs('2021-04-25'), true, true);
-    let task2 = new TaskModel(2, "Buy some groceries", dayjs('2021-04-24'), false, false);
-    let task3 = new TaskModel(3, "Read books", dayjs('2021-04-26'), true, false);
-    let task4 = new TaskModel(4, "Watch a movie", dayjs('2021-04-27'), false, true);
-    let task5 = new TaskModel(5, "Sleep tight", dayjs('2021-04-28'), false, true);
-    let task6 = new TaskModel(6, "Workout", dayjs('2021-04-29'), false, true);
-    let task7 = new TaskModel(7, "Listen to bad music", dayjs('2021-04-30'), true, true);
-    let task8 = new TaskModel(8, "Study Web Applications", dayjs('2021-05-05'), false, true);
-    let task9 = new TaskModel(9, "Go for a run", dayjs('2021-05-06'), false, true);
+    let task1 = new TaskModel(0, "Call home", dayjs('2021-05-25'), true, true);
+    let task2 = new TaskModel(0, "Buy some groceries", dayjs('2021-05-10'), false, false);
+    let task3 = new TaskModel(0, "Read books", dayjs('2021-05-26'), true, false);
+    let task4 = new TaskModel(0, "Watch a movie", dayjs('2021-05-11'), false, true);
+    let task5 = new TaskModel(0, "Sleep tight", dayjs('2021-05-12'), false, true);
+    let task6 = new TaskModel(0, "Workout", dayjs('2021-05-29'), false, true);
+    let task7 = new TaskModel(0, "Listen to bad music", dayjs('2021-05-30'), true, true);
+    let task8 = new TaskModel(0, "Study Web Applications", dayjs('2021-05-15'), false, true);
+    let task9 = new TaskModel(0, "Go for a run", dayjs('2021-05-06'), false, true);
+    let task10 = new TaskModel(0, "Watch the football game", dayjs('2021-05-14'), false, true);
+    let task11 = new TaskModel(0, "Take a shower", dayjs('2021-05-06'), false, true);
+
 
     let my_task_list = TaskListModel();
     my_task_list.AddTask(task1);
@@ -140,13 +156,11 @@ const createTaskList = function () {
     my_task_list.AddTask(task7);
     my_task_list.AddTask(task8);
     my_task_list.AddTask(task9);
+    my_task_list.AddTask(task10);
+    my_task_list.AddTask(task11);
 
     return my_task_list;
 
-}
-
-function createTask(id, description, deadline, important = false, Private = false){
-    return new TaskModel(id, description, deadline, important, Private);
 }
 
 export default createTaskList
